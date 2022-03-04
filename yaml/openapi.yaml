@@ -1,0 +1,224 @@
+openapi: 3.0.3
+info:
+  title: API documentation for test project
+  description: REST API for CRUP operation on User resource
+  contact: {}
+  license:
+    name: license url
+    url: 'http://unlicense.org'
+  version: '0.0.1'
+servers:
+  - url: 'http://localhost:8081'
+    description: Inferred Url
+tags:
+  - name: Users
+    description: User resource
+  - name: UserSearch
+paths:
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      description: >-
+        Use this API to create a new user specifying : name, surname, email, password and complete address
+      operationId: addNewUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Created
+          headers:
+            'Location':
+                $ref: '#/components/headers/Location'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+      security:
+        - basicAuth: []
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      description: 'Get all users'
+      operationId: readAllUser
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/User'
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      security:
+        - basicAuth: []
+    put:
+      tags:
+        - Users
+      summary: Update an existing user
+      description: >-
+        Use this API to update an existing user specifying 
+      operationId: updateUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '204':
+          description: Done
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      security:
+        - basicAuth: []
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get a users
+      description: 'Get a specific user'
+      operationId: readUser
+      parameters:
+        - name: id
+          in: path
+          description: user id to extract
+          required: true
+          style: simple
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      security:
+        - basicAuth: []
+    delete:
+      tags:
+        - Users
+      summary: Delete a users
+      description: 'Delete a specific user'
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          description: user id to delete
+          required: true
+          style: simple
+          schema:
+            type: number
+            format: int64
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      security:
+        - basicAuth: []
+  /users/search:
+    get:
+      tags:
+        - UserSearch
+      summary: Search users
+      description: 'Search users'
+      operationId: searchUser
+      parameters:
+        - name: name
+          in: query
+          description: user name to search
+          required: false
+          schema:
+            type: string
+        - name: surname
+          in: query
+          description: user surname to search
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/User'
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      security:
+        - basicAuth: []
+components:
+  headers:
+    Location:
+      schema:
+        type: string
+      description: 'Location header: /users/{id-created}'
+  schemas:
+    User:
+      title: User
+      required:
+        - name
+        - surname
+        - email
+        - password
+      type: object
+      properties:
+        id:
+          type: number
+          format: int64
+          description: 'the user id'
+        name:
+          type: string
+          description: 'the user name'
+        surname:
+          type: string
+          description: 'the user surname'
+        email:
+          type: string
+          description: 'the user email'
+        password:
+          type: string
+          description: 'the user password'
+        address:
+          type: string
+          description: 'the user address'
+        city:
+          type: string
+          description: 'the user city'
+        zipcode:
+          type: string
+          description: 'the user zipcode'
+        country:
+          type: string
+          description: 'the user country'
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
