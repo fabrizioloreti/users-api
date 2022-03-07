@@ -2,6 +2,7 @@ package com.test.usersapi.model;
 
 
 import lombok.Data;
+import org.springframework.boot.context.properties.ConstructorBinding;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
