@@ -1,0 +1,33 @@
+services:
+
+  postgres:
+    image: 'postgres:latest'
+    container_name: users-api-postgres
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data_user_api:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d/
+
+  users-api:
+    image: 'users-api:latest'
+    build:
+      context: .
+    container_name: 'users-api'
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=none
+
+volumes:
+  postgres_data_user_api:
