@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -132,6 +133,59 @@ public class UsersOperationsImpl implements UsersOperations {
      */
     public ResponseEntity<Void> updateUser(User user) throws Exception {
         ResponseEntity<Void> response = new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+
+        if(user.getId() == null)
+            response = new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+
+        String sql = "update users set ";
+        String set = "";
+        String where = " where id = ?";
+        List<Object> obj = new ArrayList<>();
+        if(user.getAddress() != null) {
+            set += "address = ?";
+            obj.add(user.getAddress());
+        }
+        if(!set.equalsIgnoreCase("")) set += ",";
+        if(user.getCity() != null) {
+            set += "city = ?";
+            obj.add(user.getCity());
+        }
+        if(!set.equalsIgnoreCase("")) set += ",";
+        if(user.getCountry() != null) {
+            set += "country = ?";
+            obj.add(user.getCountry());
+        }
+        if(!set.equalsIgnoreCase("")) set += ",";
+        if(user.getZipcode() != null) {
+            set += "zipcode = ?";
+            obj.add(user.getZipcode());
+        }
+        if(!set.equalsIgnoreCase("")) set += ",";
+        if(user.getName() != null) {
+            set += "name = ?";
+            obj.add(user.getName());
+        }
+        if(!set.equalsIgnoreCase("")) set += ",";
+        if(user.getSurname() != null) {
+            set += "surname = ?";
+            obj.add(user.getSurname());
+        }
+        if(!set.equalsIgnoreCase("")) set += ",";
+        if(user.getEmail() != null) {
+            set += "email = ?";
+            obj.add(user.getEmail());
+        }
+        if(!set.equalsIgnoreCase("")) set += ",";
+        if(user.getPassword() != null) {
+            set += "password = ?";
+            obj.add(user.getPassword());
+        }
+
+        obj.add(user.getId());
+        int rows = jdbc.update(sql + set + where, obj.toArray());
+        if (rows > 0) {
+            log.info(String.format("%s - user updated [%d]", LOG_TAG, user.getId().longValue()));
+        }
 
         return response;
     }
